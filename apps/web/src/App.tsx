@@ -3,6 +3,7 @@ import { AuthProvider } from "./auth/AuthProvider";
 import { RequireAuth } from "./auth/RequireAuth";
 import { RequireRole } from "./auth/RequireRole";
 import { RequireTenantAccess } from "./auth/RequireTenantAccess";
+import { RequireTenantAdmin } from "./auth/RequireTenantAdmin";
 import { InstallWizardPage } from "./pages/InstallWizardPage";
 import { AppShellPage } from "./pages/AppShellPage";
 import { AppHomeRedirect } from "./pages/AppHomeRedirect";
@@ -43,10 +44,31 @@ export function App() {
           }
         >
           <Route index element={<AppHomeRedirect />} />
-          <Route path="audit" element={<AppAuditRedirect />} />
+          <Route
+            path="audit"
+            element={
+              <RequireTenantAdmin>
+                <AppAuditRedirect />
+              </RequireTenantAdmin>
+            }
+          />
           <Route path="ledger" element={<AppLedgerRedirect />} />
-          <Route path="outbox" element={<AppOutboxRedirect />} />
-          <Route path="kernel" element={<AppKernelRedirect />} />
+          <Route
+            path="outbox"
+            element={
+              <RequireTenantAdmin>
+                <AppOutboxRedirect />
+              </RequireTenantAdmin>
+            }
+          />
+          <Route
+            path="kernel"
+            element={
+              <RequireTenantAdmin>
+                <AppKernelRedirect />
+              </RequireTenantAdmin>
+            }
+          />
           <Route path="forbidden" element={<ForbiddenPage />} />
           <Route
             path="platform/tenants"
@@ -76,7 +98,9 @@ export function App() {
             path="t/:tenantId/invite"
             element={
               <RequireTenantAccess>
-                <TenantInvitePage />
+                <RequireTenantAdmin>
+                  <TenantInvitePage />
+                </RequireTenantAdmin>
               </RequireTenantAccess>
             }
           />
@@ -84,7 +108,9 @@ export function App() {
             path="t/:tenantId/audit"
             element={
               <RequireTenantAccess>
-                <TenantAuditPage />
+                <RequireTenantAdmin>
+                  <TenantAuditPage />
+                </RequireTenantAdmin>
               </RequireTenantAccess>
             }
           />
@@ -100,7 +126,9 @@ export function App() {
             path="t/:tenantId/outbox"
             element={
               <RequireTenantAccess>
-                <TenantOutboxPage />
+                <RequireTenantAdmin>
+                  <TenantOutboxPage />
+                </RequireTenantAdmin>
               </RequireTenantAccess>
             }
           />
@@ -108,7 +136,9 @@ export function App() {
             path="t/:tenantId/kernel"
             element={
               <RequireTenantAccess>
-                <TenantKernelHealthPage />
+                <RequireTenantAdmin>
+                  <TenantKernelHealthPage />
+                </RequireTenantAdmin>
               </RequireTenantAccess>
             }
           />
@@ -116,7 +146,9 @@ export function App() {
             path="t/:tenantId/settings"
             element={
               <RequireTenantAccess>
-                <TenantSettingsPage />
+                <RequireTenantAdmin>
+                  <TenantSettingsPage />
+                </RequireTenantAdmin>
               </RequireTenantAccess>
             }
           />

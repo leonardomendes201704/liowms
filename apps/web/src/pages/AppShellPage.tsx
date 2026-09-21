@@ -1,12 +1,14 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { hasBootstrapRole } from "@liowms/shared";
 import { useAuth } from "../auth/AuthProvider";
+import { shellBrandTitle, shellNavItems } from "../shell-nav";
 import styles from "../components/install-shell.module.css";
 
 export function AppShellPage() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const isSuperAdmin = user ? hasBootstrapRole(user, "super_admin") : false;
+  const navItems = user ? shellNavItems(user) : [];
 
   async function onLogout() {
     await signOut();
@@ -20,7 +22,9 @@ export function AppShellPage() {
           <span className={styles.logoMark} aria-hidden />
           <div>
             <p className={styles.brandEyebrow}>LioWMS</p>
-            <h1 className={styles.brandTitle}>Administração</h1>
+            <h1 className={styles.brandTitle}>
+              {user ? shellBrandTitle(user) : "Administração"}
+            </h1>
           </div>
         </div>
         <div className={styles.headerActions}>
@@ -29,46 +33,11 @@ export function AppShellPage() {
               Tenants (K6)
             </Link>
           ) : null}
-          {user?.tenantIds[0] ? (
-            <>
-              <Link
-                to={`/app/t/${user.tenantIds[0]}/plants`}
-                className={styles.mockLink}
-              >
-                Minhas plantas
-              </Link>
-              <Link
-                to={`/app/t/${user.tenantIds[0]}/outbox`}
-                className={styles.mockLink}
-              >
-                E-mail (K14)
-              </Link>
-              <Link
-                to={`/app/t/${user.tenantIds[0]}/kernel`}
-                className={styles.mockLink}
-              >
-                Telemetria (K12)
-              </Link>
-              <Link
-                to={`/app/t/${user.tenantIds[0]}/settings`}
-                className={styles.mockLink}
-              >
-                Configurações (K9)
-              </Link>
-              <Link
-                to={`/app/t/${user.tenantIds[0]}/audit`}
-                className={styles.mockLink}
-              >
-                Auditoria (K10)
-              </Link>
-              <Link
-                to={`/app/t/${user.tenantIds[0]}/ledger`}
-                className={styles.mockLink}
-              >
-                Estoque (K11)
-              </Link>
-            </>
-          ) : null}
+          {navItems.map((item) => (
+            <Link key={item.to} to={item.to} className={styles.mockLink}>
+              {item.label}
+            </Link>
+          ))}
           <button type="button" className={styles.btnGhost} onClick={onLogout}>
             Sair
           </button>

@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import pg from "pg";
-import { AUTH_HTTP, SESSION_COOKIE_NAME } from "@liowms/shared";
+import {
+  AUTH_ERROR_FORBIDDEN,
+  AUTH_HTTP,
+  SESSION_COOKIE_NAME,
+  TENANT_AUDIT_HTTP,
+  TENANT_SETTINGS_HTTP,
+  tenantPlantsPath,
+} from "@liowms/shared";
 import { buildServer } from "../src/server.js";
 import { getRuntimePool, setRuntimePool } from "../src/db/pool.js";
 import { redactSecrets } from "../src/logging.js";
@@ -210,6 +217,92 @@ describe("auth session (WMS-89)", () => {
     });
     assert.equal(opLogin.statusCode, 200);
     assert.ok(opLogin.json().user.roles.includes("operator"));
+  });
+
+  it("operator RBAC: plant read ok, admin APIs forbidden (S-UX J12-02)", async () => {
+    const adminLogin = await app.inject({
+      method: "POST",
+      url: AUTH_HTTP.login,
+      payload: {
+        email: "admin@example.com",
+        password: "new-secret-99",
+      },
+    });
+    const adminCookie = sessionCookieFromResponse(adminLogin.headers);
+
+    const invite = await app.inject({
+      method: "POST",
+      url: AUTH_HTTP.invites,
+      headers: { cookie: `${SESSION_COOKIE_NAME}=${adminCookie}` },
+      payload: {
+        email: "op-rbac@example.com",
+        tenantId,
+        role: "operator",
+      },
+    });
+    assert.equal(invite.statusCode, 200);
+
+    const pool = getRuntimePool();
+    const outbox = await pool!.query<{ payload: { inviteToken: string } }>(
+      `SELECT payload FROM notify_outbox WHERE kind = 'user_invite' AND payload->>'to' = 'op-rbac@example.com' ORDER BY created_at DESC LIMIT 1`,
+    );
+    const inviteToken = outbox.rows[0]?.payload.inviteToken;
+    assert.ok(inviteToken);
+
+    const accept = await app.inject({
+      method: "POST",
+      url: AUTH_HTTP.invitesAccept,
+      payload: {
+        token: inviteToken,
+        password: "op-rbac-pass",
+        displayName: "Operador RBAC",
+      },
+    });
+    assert.equal(accept.statusCode, 200);
+
+    const opLogin = await app.inject({
+      method: "POST",
+      url: AUTH_HTTP.login,
+      payload: {
+        email: "op-rbac@example.com",
+        password: "op-rbac-pass",
+      },
+    });
+    const opCookie = sessionCookieFromResponse(opLogin.headers);
+    const authHeaders = {
+      cookie: `${SESSION_COOKIE_NAME}=${opCookie}`,
+      "x-liowms-tenant-id": tenantId,
+    };
+
+    const listPlants = await app.inject({
+      method: "GET",
+      url: tenantPlantsPath(tenantId),
+      headers: authHeaders,
+    });
+    assert.equal(listPlants.statusCode, 200);
+
+    const createPlant = await app.inject({
+      method: "POST",
+      url: tenantPlantsPath(tenantId),
+      headers: authHeaders,
+      payload: { slug: "op-plant", name: "Op Plant" },
+    });
+    assert.equal(createPlant.statusCode, 403);
+    assert.equal(createPlant.json().code, AUTH_ERROR_FORBIDDEN);
+
+    const audit = await app.inject({
+      method: "GET",
+      url: TENANT_AUDIT_HTTP.events,
+      headers: authHeaders,
+    });
+    assert.equal(audit.statusCode, 403);
+
+    const settings = await app.inject({
+      method: "GET",
+      url: TENANT_SETTINGS_HTTP.settings,
+      headers: authHeaders,
+    });
+    assert.equal(settings.statusCode, 403);
   });
 
   it("redactSecrets strips passwords from log lines", () => {

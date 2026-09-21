@@ -1,8 +1,9 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import type { TenantPlant } from "@liowms/shared";
-import { AUTH_ERROR_FORBIDDEN } from "@liowms/shared";
+import { AUTH_ERROR_FORBIDDEN, hasBootstrapRole } from "@liowms/shared";
 import { createTenantPlant, listTenantPlants } from "../api/tenant-client";
+import { useAuth } from "../auth/AuthProvider";
 import { LioBtnPrimary, LioField } from "../components/install-ui";
 import { W16Forbidden } from "../components/w16-forbidden";
 import styles from "../components/install-shell.module.css";
@@ -17,6 +18,8 @@ function isPlantList(data: unknown): data is { plants: TenantPlant[] } {
 
 export function TenantPlantsPage() {
   const { tenantId } = useParams<{ tenantId: string }>();
+  const { user } = useAuth();
+  const canManagePlants = user ? hasBootstrapRole(user, "tenant_admin") : false;
   const [plants, setPlants] = useState<TenantPlant[]>([]);
   const [loading, setLoading] = useState(true);
   const [forbidden, setForbidden] = useState(false);
@@ -97,14 +100,19 @@ export function TenantPlantsPage() {
     <main className={styles.card}>
       <h2 className={styles.sectionTitle}>Plantas do tenant (K7)</h2>
       <p className={styles.sectionLead}>
-        Tenant <code className={styles.inlineCode}>{tenantId}</code> ·{" "}
-        <Link to={`/app/t/${tenantId}/invite`} className={styles.mockLink}>
-          Convites (K13)
-        </Link>
-        {" · "}
-        <Link to={`/app/t/${tenantId}/settings`} className={styles.mockLink}>
-          Configurações (K9)
-        </Link>
+        Tenant <code className={styles.inlineCode}>{tenantId}</code>
+        {canManagePlants ? (
+          <>
+            {" · "}
+            <Link to={`/app/t/${tenantId}/invite`} className={styles.mockLink}>
+              Convites (K13)
+            </Link>
+            {" · "}
+            <Link to={`/app/t/${tenantId}/settings`} className={styles.mockLink}>
+              Configurações (K9)
+            </Link>
+          </>
+        ) : null}
       </p>
 
       {error ? (
@@ -128,20 +136,22 @@ export function TenantPlantsPage() {
         </ul>
       )}
 
-      <form className={styles.formStack} onSubmit={onCreate}>
-        <h3 className={styles.sectionTitle}>Nova planta</h3>
-        <LioField id="plantSlug" label="Slug" value={slug} onChange={setSlug} />
-        <LioField id="plantName" label="Nome" value={name} onChange={setName} />
-        <div className={styles.actions}>
-          <LioBtnPrimary
-            type="submit"
-            loading={creating}
-            disabled={!slug.trim() || !name.trim()}
-          >
-            Criar planta
-          </LioBtnPrimary>
-        </div>
-      </form>
+      {canManagePlants ? (
+        <form className={styles.formStack} onSubmit={onCreate}>
+          <h3 className={styles.sectionTitle}>Nova planta</h3>
+          <LioField id="plantSlug" label="Slug" value={slug} onChange={setSlug} />
+          <LioField id="plantName" label="Nome" value={name} onChange={setName} />
+          <div className={styles.actions}>
+            <LioBtnPrimary
+              type="submit"
+              loading={creating}
+              disabled={!slug.trim() || !name.trim()}
+            >
+              Criar planta
+            </LioBtnPrimary>
+          </div>
+        </form>
+      ) : null}
     </main>
   );
 }
