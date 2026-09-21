@@ -1,10 +1,12 @@
-import { useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { hasBootstrapRole } from "@liowms/shared";
 import { useAuth } from "../auth/AuthProvider";
 import styles from "../components/install-shell.module.css";
 
 export function AppShellPage() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const isSuperAdmin = user ? hasBootstrapRole(user, "super_admin") : false;
 
   async function onLogout() {
     await signOut();
@@ -12,29 +14,44 @@ export function AppShellPage() {
   }
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.shellWide}>
       <header className={styles.header}>
         <div className={styles.brand}>
           <span className={styles.logoMark} aria-hidden />
           <div>
             <p className={styles.brandEyebrow}>LioWMS</p>
-            <h1 className={styles.brandTitle}>Área autenticada</h1>
+            <h1 className={styles.brandTitle}>Administração</h1>
           </div>
         </div>
-      </header>
-      <main className={styles.card}>
-        <h2 className={styles.sectionTitle}>Shell mínimo (S0.2)</h2>
-        <p className={styles.sectionLead}>
-          Placeholder até o slice S-UX. Sessão ativa para{" "}
-          <strong>{user?.displayName ?? user?.email}</strong>
-          {user?.roles?.length ? ` · ${user.roles.join(", ")}` : null}.
-        </p>
-        <div className={styles.actions}>
+        <div className={styles.headerActions}>
+          {isSuperAdmin ? (
+            <Link to="/app/platform/tenants" className={styles.mockLink}>
+              Tenants (K6)
+            </Link>
+          ) : null}
+          {user?.tenantIds[0] ? (
+            <Link
+              to={`/app/t/${user.tenantIds[0]}/plants`}
+              className={styles.mockLink}
+            >
+              Minhas plantas
+            </Link>
+          ) : null}
           <button type="button" className={styles.btnGhost} onClick={onLogout}>
             Sair
           </button>
         </div>
-      </main>
+      </header>
+      {user ? (
+        <p className={styles.sessionMeta}>
+          {user.displayName ?? user.email}
+          {user.roles.length ? ` · ${user.roles.join(", ")}` : ""}
+          {user.tenantIds.length
+            ? ` · ${user.tenantIds.length} tenant(s)`
+            : null}
+        </p>
+      ) : null}
+      <Outlet />
     </div>
   );
 }
