@@ -22,7 +22,7 @@ Optional infra DSN (Release / local after install): `DATABASE_URL` — never com
 | `service` | `liowms-api` |
 | `version` | API semver |
 | `migrations.applied` / `migrations.latest` | Schema migration state |
-| `queues.ready` / `queues.detail` | Outbox readiness (S0.1 stub) |
+| `queues.ready` / `queues.detail` | Outbox worker (S0.7: `outbox:worker`) |
 
 ## Install wizard API (`/api/v1/install/*`)
 
@@ -49,7 +49,18 @@ Requires **installed** instance. Business routes under `/api/v1/*` require a val
 | `POST` | `/api/v1/auth/invites` | super_admin / tenant_admin |
 | `POST` | `/api/v1/auth/invites/accept` | Public |
 
-Password reset and invite e-mail bodies are queued in `notify_outbox` (stub until S0.7 SMTP).
+Password reset and invite e-mail bodies are queued in `notify_outbox`; **S0.7** worker delivers via tenant SMTP (K9 envelope).
+
+## Notify / outbox (S0.7 — WMS-106 / K14)
+
+In-process worker (`notify/worker.ts`) polls `notify_outbox`, sends `user_invite` and `password_reset` via nodemailer. Configure staging with `LIOWMS_PUBLIC_APP_URL` for link targets.
+
+| Method | Path | Notes |
+|--------|------|-------|
+| `GET` | `/api/v1/tenant/notify-outbox` | Query `queue=active\|dlq` — tenant_admin / super_admin |
+| `POST` | `/api/v1/tenant/notify-outbox/:id/retry` | DLQ or failed only |
+
+Secrets are envelope-encrypted (ADR-004); responses never include cleartext. SMTP saves enqueue `smtp_config_saved` (skipped delivery). **PATCH** settings writes audit (S0.5).
 
 ## Tenant settings (`/api/v1/tenant/settings`) — S0.4 / WMS-94
 
@@ -60,7 +71,7 @@ Requires **tenant_admin** or **super_admin**. Use header `x-lio-tenant-id` when 
 | `GET` | `/api/v1/tenant/settings` | — |
 | `PATCH` | `/api/v1/tenant/settings` | `{ "plain": { "smtp.host": "…" }, "secrets": { "smtp.password": "…" } }` |
 
-Secrets are envelope-encrypted (ADR-004); responses never include cleartext. SMTP saves enqueue `smtp_config_saved` on `notify_outbox` (stub). **PATCH** writes an append-only row in `audit.audit_events` (secrets masked per ADR-004).
+Secrets are envelope-encrypted (ADR-004); responses never include cleartext. SMTP saves enqueue `smtp_config_saved` on `notify_outbox` (skipped). **PATCH** writes an append-only row in `audit.audit_events` (secrets masked per ADR-004).
 
 ## Tenant audit log (`/api/v1/tenant/audit-events`) — S0.5 / WMS-97
 

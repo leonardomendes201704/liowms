@@ -13,7 +13,7 @@ export async function registerHealthRoutes(app: FastifyInstance) {
       migrationsApplied: state.migrationsApplied,
       migrationsLatest: state.migrationsLatest,
       queuesReady: state.installed,
-      queuesDetail: state.installed ? "outbox:idle" : "n/a",
+      queuesDetail: state.installed ? "outbox:worker" : "n/a",
     });
     return reply.send(body);
   });

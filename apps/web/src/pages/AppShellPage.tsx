@@ -38,6 +38,12 @@ export function AppShellPage() {
                 Minhas plantas
               </Link>
               <Link
+                to={`/app/t/${user.tenantIds[0]}/outbox`}
+                className={styles.mockLink}
+              >
+                E-mail (K14)
+              </Link>
+              <Link
                 to={`/app/t/${user.tenantIds[0]}/settings`}
                 className={styles.mockLink}
               >

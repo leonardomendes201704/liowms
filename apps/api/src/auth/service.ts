@@ -6,6 +6,7 @@ import {
 } from "@liowms/shared";
 import { getRuntimePool, readInstallMeta } from "../db/pool.js";
 import { safeLog } from "../logging.js";
+import { enqueueNotifyOutbox, resolveTenantIdForUser } from "../notify/service.js";
 import { signSessionJwt, SESSION_TTL_SECONDS, verifySessionJwt } from "./jwt.js";
 import { verifyPassword, hashPassword } from "./password.js";
 import { hashToken, newOpaqueToken } from "./tokens.js";
@@ -66,15 +67,9 @@ async function loadUserProfile(userId: string): Promise<AuthUserProfile | null> 
 async function enqueueOutbox(
   kind: string,
   payload: Record<string, unknown>,
+  tenantId: string | null,
 ): Promise<void> {
-  const pool = getRuntimePool();
-  if (!pool) {
-    return;
-  }
-  await pool.query(
-    `INSERT INTO notify_outbox (kind, payload) VALUES ($1, $2::jsonb)`,
-    [kind, JSON.stringify(payload)],
-  );
+  await enqueueNotifyOutbox({ kind, payload, tenantId });
   safeLog("info", "outbox_enqueue", { kind, to: payload.to ?? payload.email });
 }
 
@@ -251,12 +246,20 @@ export async function requestPasswordReset(
     [user.id, tokenHash, expiresAt],
   );
 
+  const client = await pool.connect();
+  let tenantId: string | null = null;
+  try {
+    tenantId = await resolveTenantIdForUser(client, user.id);
+  } finally {
+    client.release();
+  }
+
   await enqueueOutbox("password_reset", {
     to: email.trim(),
     userId: user.id,
     resetToken: token,
     expiresAt: expiresAt.toISOString(),
-  });
+  }, tenantId);
 
   return { ok: true };
 }
@@ -366,7 +369,7 @@ export async function createInvite(input: {
     role: input.role,
     inviteToken: token,
     expiresAt: expiresAt.toISOString(),
-  });
+  }, input.tenantId);
 
   return { ok: true, inviteId: res.rows[0].id, acceptToken: token };
 }

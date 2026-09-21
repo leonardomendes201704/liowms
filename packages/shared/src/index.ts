@@ -6,3 +6,4 @@ export * from "./tenant-admin.js";
 export * from "./tenant-settings.js";
 export * from "./tenant-audit.js";
 export * from "./tenant-ledger.js";
+export * from "./tenant-notify.js";

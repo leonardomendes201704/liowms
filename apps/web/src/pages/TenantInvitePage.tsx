@@ -30,7 +30,7 @@ export function TenantInvitePage() {
       }
       if ("ok" in result && result.ok) {
         setMessage(
-          "Convite enfileirado (outbox S0.7). Use o token de staging para aceitar em /invite/accept.",
+          "Convite enfileirado. Verifique a caixa de entrada ou a fila K14.",
         );
         setEmail("");
       }

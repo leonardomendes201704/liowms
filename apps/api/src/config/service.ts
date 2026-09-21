@@ -11,6 +11,7 @@ import { settingsEntriesToAuditMap } from "../audit/redact.js";
 import { openValue, sealValue } from "../crypto/envelope.js";
 import { withDbScope } from "../db/tenant-scope.js";
 import { safeLog } from "../logging.js";
+import { enqueueNotifyOutbox } from "../notify/service.js";
 import { loadEnvelopeMasterKey } from "./master-key.js";
 
 const SMTP_KEYS = new Set<string>([
@@ -26,17 +27,14 @@ function isKnownSecretKey(key: string): boolean {
 }
 
 async function enqueueSmtpConfigStub(tenantId: string): Promise<void> {
-  await withDbScope({ bypassRls: true }, async (client) => {
-    await client.query(
-      `INSERT INTO notify_outbox (kind, payload) VALUES ($1, $2::jsonb)`,
-      [
-        "smtp_config_saved",
-        JSON.stringify({
-          tenantId,
-          note: "SMTP envelope persisted; delivery deferred S0.7",
-        }),
-      ],
-    );
+  await enqueueNotifyOutbox({
+    kind: "smtp_config_saved",
+    tenantId,
+    skipDelivery: true,
+    payload: {
+      tenantId,
+      note: "SMTP envelope persisted",
+    },
   });
   safeLog("info", "smtp_config_saved", { tenantId });
 }
