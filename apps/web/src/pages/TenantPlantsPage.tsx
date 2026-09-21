@@ -101,6 +101,10 @@ export function TenantPlantsPage() {
         <Link to={`/app/t/${tenantId}/invite`} className={styles.mockLink}>
           Convites (K13)
         </Link>
+        {" · "}
+        <Link to={`/app/t/${tenantId}/settings`} className={styles.mockLink}>
+          Configurações (K9)
+        </Link>
       </p>
 
       {error ? (

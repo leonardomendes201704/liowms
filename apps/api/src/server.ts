@@ -4,11 +4,16 @@ import { registerHealthRoutes } from "./health/routes.js";
 import { registerInstallRoutes } from "./install/routes.js";
 import { registerInstallGuards } from "./guards.js";
 import { registerPlatformRoutes } from "./platform/routes.js";
+import { registerConfigRoutes } from "./config/routes.js";
 import { registerTenantRoutes } from "./tenant/routes.js";
-import { refreshRuntimePoolFromInfra } from "./install/state.js";
+import {
+  applyPendingMigrationsOnStartup,
+  refreshRuntimePoolFromInfra,
+} from "./install/state.js";
 
 export async function buildServer() {
   await refreshRuntimePoolFromInfra();
+  await applyPendingMigrationsOnStartup();
 
   const app = Fastify({
     logger: false,
@@ -20,6 +25,7 @@ export async function buildServer() {
   await registerAuthRoutes(app);
   await registerPlatformRoutes(app);
   await registerTenantRoutes(app);
+  await registerConfigRoutes(app);
   await registerInstallGuards(app);
 
   return app;

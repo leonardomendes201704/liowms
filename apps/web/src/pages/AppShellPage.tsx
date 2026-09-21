@@ -30,12 +30,20 @@ export function AppShellPage() {
             </Link>
           ) : null}
           {user?.tenantIds[0] ? (
-            <Link
-              to={`/app/t/${user.tenantIds[0]}/plants`}
-              className={styles.mockLink}
-            >
-              Minhas plantas
-            </Link>
+            <>
+              <Link
+                to={`/app/t/${user.tenantIds[0]}/plants`}
+                className={styles.mockLink}
+              >
+                Minhas plantas
+              </Link>
+              <Link
+                to={`/app/t/${user.tenantIds[0]}/settings`}
+                className={styles.mockLink}
+              >
+                Configurações (K9)
+              </Link>
+            </>
           ) : null}
           <button type="button" className={styles.btnGhost} onClick={onLogout}>
             Sair

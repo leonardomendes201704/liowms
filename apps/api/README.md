@@ -51,6 +51,17 @@ Requires **installed** instance. Business routes under `/api/v1/*` require a val
 
 Password reset and invite e-mail bodies are queued in `notify_outbox` (stub until S0.7 SMTP).
 
+## Tenant settings (`/api/v1/tenant/settings`) — S0.4 / WMS-94
+
+Requires **tenant_admin** or **super_admin**. Use header `x-lio-tenant-id` when the session has no active tenant.
+
+| Method | Path | Body |
+|--------|------|------|
+| `GET` | `/api/v1/tenant/settings` | — |
+| `PATCH` | `/api/v1/tenant/settings` | `{ "plain": { "smtp.host": "…" }, "secrets": { "smtp.password": "…" } }` |
+
+Secrets are envelope-encrypted (ADR-004); responses never include cleartext. SMTP saves enqueue `smtp_config_saved` on `notify_outbox` (stub).
+
 ## Tests
 
 ```bash

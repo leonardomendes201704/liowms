@@ -2,7 +2,7 @@
 const DSN_PASSWORD_RE =
   /(postgres(?:ql)?:\/\/[^:]+:)([^@]+)(@)/gi;
 const JSON_SECRET_RE =
-  /("(?:password|resetToken|inviteToken|token)"\s*:\s*")([^"]+)(")/gi;
+  /("(?:password|resetToken|inviteToken|token|smtp\.password)"\s*:\s*")([^"]+)(")/gi;
 
 export function redactSecrets(message: string): string {
   return message

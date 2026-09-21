@@ -11,6 +11,7 @@ export const MIGRATION_VERSIONS = [
   "001_install_kernel",
   "002_auth_session",
   "003_tenant_rls",
+  "004_config_store",
 ] as const;
 export const LATEST_MIGRATION = MIGRATION_VERSIONS[MIGRATION_VERSIONS.length - 1];
 

@@ -10,6 +10,7 @@ import { ForbiddenPage } from "./pages/ForbiddenPage";
 import { PlatformTenantsPage } from "./pages/PlatformTenantsPage";
 import { TenantPlantsPage } from "./pages/TenantPlantsPage";
 import { TenantInvitePage } from "./pages/TenantInvitePage";
+import { TenantSettingsPage } from "./pages/TenantSettingsPage";
 import { InviteAcceptPage } from "./pages/InviteAcceptPage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -55,6 +56,14 @@ export function App() {
             element={
               <RequireTenantAccess>
                 <TenantInvitePage />
+              </RequireTenantAccess>
+            }
+          />
+          <Route
+            path="t/:tenantId/settings"
+            element={
+              <RequireTenantAccess>
+                <TenantSettingsPage />
               </RequireTenantAccess>
             }
           />

@@ -2,6 +2,7 @@ import type { InstallPhase } from "@liowms/shared";
 import {
   countAppliedMigrations,
   LATEST_MIGRATION,
+  runMigrations,
 } from "./migrations/index.js";
 import {
   createPool,
@@ -40,6 +41,29 @@ export async function refreshRuntimePoolFromInfra(): Promise<void> {
   }
   const pool = createPool(dsn);
   setRuntimePool(pool);
+}
+
+/** Apply pending SQL migrations on an already-installed instance (Release restage). */
+export async function applyPendingMigrationsOnStartup(): Promise<void> {
+  const pool = getRuntimePool();
+  if (!pool) {
+    return;
+  }
+  const meta = await readInstallMeta(pool);
+  if (!meta?.install_lock) {
+    return;
+  }
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await runMigrations(client);
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 export async function resolveInstallState(): Promise<InstallRuntimeState> {

@@ -3,3 +3,4 @@ export * from "./health.js";
 export * from "./install.js";
 export * from "./wizard-state.js";
 export * from "./tenant-admin.js";
+export * from "./tenant-settings.js";
