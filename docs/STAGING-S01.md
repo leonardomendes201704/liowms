@@ -5,7 +5,7 @@
 | **Base URL** | https://pierce-playstation-mail-kay.trycloudflare.com |
 | **Wizard** | `/install` |
 | **Health** | `/health` (expect `installed: false` after Release DB reset) |
-| **Git** | https://github.com/leonardomendes201704/liowms @ `main` → `68e3038` (S0.7 notify+K14 — [PAP-169](/PAP/issues/PAP-169)) |
+| **Git** | https://github.com/leonardomendes201704/liowms @ `main` → `68e3038` (S0.7 J0c staging PASS — [PAP-170](/PAP/issues/PAP-170)) |
 | **Postgres slot** | `app_staging` (company Docker Postgres) |
 
 ## Ops notes (Release)
