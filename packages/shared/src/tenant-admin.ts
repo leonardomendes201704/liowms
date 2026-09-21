@@ -9,6 +9,14 @@ export const PLATFORM_HTTP = {
   tenants: "/api/v1/platform/tenants",
 } as const;
 
+export function platformTenantDetailPath(tenantId: string): string {
+  return `/api/v1/platform/tenants/${tenantId}`;
+}
+
+export function platformTenantOffboardPath(tenantId: string): string {
+  return `/api/v1/platform/tenants/${tenantId}/offboard`;
+}
+
 export function tenantPlantsPath(tenantId: string): string {
   return `/api/v1/tenants/${tenantId}/plants`;
 }
@@ -23,6 +31,7 @@ export interface PlatformTenant {
   name: string;
   isRoot: boolean;
   quotaUsers?: number | null;
+  deactivatedAt?: string | null;
   createdAt?: string;
 }
 
@@ -46,6 +55,19 @@ export interface PlatformTenantCreateBody {
 
 export interface PlatformTenantCreateResponse {
   tenant: PlatformTenant;
+}
+
+export interface PlatformTenantDetailResponse {
+  tenant: PlatformTenant;
+}
+
+export interface PlatformTenantPatchBody {
+  quotaUsers: number;
+}
+
+export interface PlatformTenantOffboardResponse {
+  tenant: PlatformTenant;
+  sessionsRevoked: number;
 }
 
 export interface TenantPlantsListResponse {

@@ -6,6 +6,7 @@ import {
   userCanAccessTenant,
 } from "@liowms/shared";
 import { getRequestAuth } from "../guards.js";
+import { isTenantActive } from "../platform/tenants.js";
 import {
   createPlant,
   getPlantById,
@@ -13,6 +14,20 @@ import {
   listPlants,
   updatePlant,
 } from "./plants.js";
+
+async function rejectIfTenantOffboarded(
+  tenantId: string,
+  reply: { status: (c: number) => { send: (b: unknown) => unknown } },
+): Promise<boolean> {
+  const active = await isTenantActive(tenantId);
+  if (!active) {
+    reply.status(403).send(
+      authError(AUTH_ERROR_FORBIDDEN, "Tenant desativado (offboarding)"),
+    );
+    return true;
+  }
+  return false;
+}
 
 function assertTenantAccess(
   auth: NonNullable<ReturnType<typeof getRequestAuth>>,
@@ -32,6 +47,9 @@ export async function registerTenantRoutes(app: FastifyInstance) {
       return reply.status(403).send(
         authError(AUTH_ERROR_FORBIDDEN, "Acesso negado a recurso de outro tenant"),
       );
+    }
+    if (await rejectIfTenantOffboarded(tenantId, reply)) {
+      return;
     }
     const plants = await listPlants(tenantId);
     return reply.send({ plants });
@@ -55,6 +73,9 @@ export async function registerTenantRoutes(app: FastifyInstance) {
       return reply.status(403).send(
         authError(AUTH_ERROR_FORBIDDEN, "Acesso negado a recurso de outro tenant"),
       );
+    }
+    if (await rejectIfTenantOffboarded(tenantId, reply)) {
+      return;
     }
     const body = req.body as { slug?: string; name?: string };
     if (!body?.slug || !body?.name) {
@@ -80,6 +101,9 @@ export async function registerTenantRoutes(app: FastifyInstance) {
       return reply.status(403).send(
         authError(AUTH_ERROR_FORBIDDEN, "Acesso negado a recurso de outro tenant"),
       );
+    }
+    if (await rejectIfTenantOffboarded(tenantId, reply)) {
+      return;
     }
     const ownerTenantId = await getPlantTenantId(plantId);
     if (!ownerTenantId) {
@@ -118,6 +142,9 @@ export async function registerTenantRoutes(app: FastifyInstance) {
       return reply.status(403).send(
         authError(AUTH_ERROR_FORBIDDEN, "Acesso negado a recurso de outro tenant"),
       );
+    }
+    if (await rejectIfTenantOffboarded(tenantId, reply)) {
+      return;
     }
     const ownerTenantId = await getPlantTenantId(plantId);
     if (!ownerTenantId) {

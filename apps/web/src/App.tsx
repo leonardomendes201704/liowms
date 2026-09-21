@@ -8,6 +8,7 @@ import { AppShellPage } from "./pages/AppShellPage";
 import { AppHomeRedirect } from "./pages/AppHomeRedirect";
 import { ForbiddenPage } from "./pages/ForbiddenPage";
 import { PlatformTenantsPage } from "./pages/PlatformTenantsPage";
+import { PlatformTenantDetailPage } from "./pages/PlatformTenantDetailPage";
 import { TenantPlantsPage } from "./pages/TenantPlantsPage";
 import { TenantInvitePage } from "./pages/TenantInvitePage";
 import { TenantSettingsPage } from "./pages/TenantSettingsPage";
@@ -52,6 +53,14 @@ export function App() {
             element={
               <RequireRole role="super_admin">
                 <PlatformTenantsPage />
+              </RequireRole>
+            }
+          />
+          <Route
+            path="platform/tenants/:tenantId"
+            element={
+              <RequireRole role="super_admin">
+                <PlatformTenantDetailPage />
               </RequireRole>
             }
           />

@@ -95,7 +95,7 @@ export function PlatformTenantsPage() {
     <main className={styles.card}>
       <h2 className={styles.sectionTitle}>Tenants da plataforma (K6)</h2>
       <p className={styles.sectionLead}>
-        Super-admin: liste tenants e crie o Tenant B para o slice S0.3.
+        Super-admin: cotas persistidas, detalhe tenant (K8) e offboarding (K15/K16).
       </p>
 
       {error ? (
@@ -114,10 +114,11 @@ export function PlatformTenantsPage() {
                   {t.slug}
                   {t.isRoot ? " · raiz" : ""}
                   {t.quotaUsers != null ? ` · cota ${t.quotaUsers} usuários` : ""}
+                  {t.deactivatedAt ? " · desativado" : ""}
                 </span>
               </div>
-              <Link to={`/app/t/${t.id}/plants`} className={styles.mockLink}>
-                Abrir admin
+              <Link to={`/app/platform/tenants/${t.id}`} className={styles.mockLink}>
+                Detalhe (K8)
               </Link>
             </li>
           ))}
@@ -141,7 +142,7 @@ export function PlatformTenantsPage() {
         />
         <LioField
           id="quotaUsers"
-          label="Cota de usuários (stub)"
+          label="Cota de usuários"
           type="number"
           value={quotaUsers}
           onChange={setQuotaUsers}

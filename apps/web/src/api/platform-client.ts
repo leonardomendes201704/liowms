@@ -2,9 +2,16 @@ import type {
   AuthErrorBody,
   PlatformTenantCreateBody,
   PlatformTenantCreateResponse,
+  PlatformTenantDetailResponse,
+  PlatformTenantOffboardResponse,
+  PlatformTenantPatchBody,
   PlatformTenantsListResponse,
 } from "@liowms/shared";
-import { PLATFORM_HTTP } from "@liowms/shared";
+import {
+  PLATFORM_HTTP,
+  platformTenantDetailPath,
+  platformTenantOffboardPath,
+} from "@liowms/shared";
 
 const jsonOpts: RequestInit = {
   credentials: "include",
@@ -33,6 +40,38 @@ export async function createPlatformTenant(
     ...jsonOpts,
     method: "POST",
     body: JSON.stringify(body),
+  });
+  return readJson(res);
+}
+
+export async function getPlatformTenant(
+  tenantId: string,
+): Promise<PlatformTenantDetailResponse | AuthErrorBody> {
+  const res = await fetch(platformTenantDetailPath(tenantId), {
+    credentials: "include",
+  });
+  return readJson(res);
+}
+
+export async function patchPlatformTenantQuota(
+  tenantId: string,
+  body: PlatformTenantPatchBody,
+): Promise<PlatformTenantDetailResponse | AuthErrorBody> {
+  const res = await fetch(platformTenantDetailPath(tenantId), {
+    ...jsonOpts,
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+  return readJson(res);
+}
+
+export async function offboardPlatformTenant(
+  tenantId: string,
+): Promise<PlatformTenantOffboardResponse | AuthErrorBody> {
+  const res = await fetch(platformTenantOffboardPath(tenantId), {
+    ...jsonOpts,
+    method: "POST",
+    body: "{}",
   });
   return readJson(res);
 }
