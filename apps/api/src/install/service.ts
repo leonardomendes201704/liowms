@@ -1,4 +1,5 @@
-import { createHash, randomBytes, scryptSync } from "node:crypto";
+import { createHash } from "node:crypto";
+import { hashPassword } from "../auth/password.js";
 import {
   INSTALL_ERROR_ALREADY_DONE,
   INSTALL_ERROR_INVALID_DSN,
@@ -29,12 +30,6 @@ export interface InstallCompleteInput {
     slug: string;
     name: string;
   };
-}
-
-function hashPassword(password: string): string {
-  const salt = randomBytes(16);
-  const hash = scryptSync(password, salt, 64);
-  return `scrypt:${salt.toString("hex")}:${hash.toString("hex")}`;
 }
 
 export async function testInstallDsn(dsn: string) {

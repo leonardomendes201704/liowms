@@ -1,6 +1,6 @@
 # `@liowms/api`
 
-HTTP API (modular monolith). **S0.1 / WMS-87:** install module — migrations, install lock, `GET /health` (H-4), wizard endpoints.
+HTTP API (modular monolith). **S0.1 / WMS-87:** install module — migrations, install lock, `GET /health` (H-4), wizard endpoints. **S0.2 / WMS-89:** auth session, RBAC bootstrap, reset/convite.
 
 ## Run
 
@@ -35,12 +35,28 @@ Only when **uninstalled**. After install → `404` + K4 envelope (`screen: "K4"`
 
 DSN is **not** written to disk; password values are redacted from logs.
 
+## Auth API (`/api/v1/auth/*`)
+
+Requires **installed** instance. Business routes under `/api/v1/*` require a valid session (cookie `lio_session` or `Authorization: Bearer` JWT).
+
+| Method | Path | Auth |
+|--------|------|------|
+| `POST` | `/api/v1/auth/login` | Public |
+| `POST` | `/api/v1/auth/logout` | Session |
+| `GET` | `/api/v1/auth/me` | Session |
+| `POST` | `/api/v1/auth/password-reset/request` | Public |
+| `POST` | `/api/v1/auth/password-reset/confirm` | Public |
+| `POST` | `/api/v1/auth/invites` | super_admin / tenant_admin |
+| `POST` | `/api/v1/auth/invites/accept` | Public |
+
+Password reset and invite e-mail bodies are queued in `notify_outbox` (stub until S0.7 SMTP).
+
 ## Tests
 
 ```bash
 LIOWMS_TEST_PG_ADMIN_DSN='postgresql://…' npm run test -w @liowms/api
 ```
 
-Covers TC-GOLD **J0-02** (health) and **J0-04** (migration rollback / no `install_lock`).
+Covers TC-GOLD **J0-02** (health), **J0-04** (migration rollback), and **WMS-89** (login K5, J0c-02 reset happy path, invite).
 
 Pack: ADR-003, ADR-004 · `04-quality/test-cases.md`
