@@ -4,8 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "echo \"api build — WMS-87\"",
-    "dev": "echo \"api dev — WMS-87\"",
-    "test": "echo \"api test — WMS-87\""
+    "build": "tsc -p tsconfig.json",
+    "dev": "node --import tsx --watch src/index.ts",
+    "start": "node --import tsx src/index.ts",
+    "test": "node --import tsx --test test/**/*.test.ts"
+  },
+  "dependencies": {
+    "@liowms/shared": "*",
+    "fastify": "^5.2.1",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   }
 }
