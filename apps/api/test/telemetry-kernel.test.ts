@@ -48,6 +48,7 @@ describe("telemetry kernel (WMS-109 / S0.8)", () => {
   let app: Awaited<ReturnType<typeof buildServer>>;
   let tenantA: string;
   let tenantB: string;
+  let runtimePool: pg.Pool | null = null;
 
   before(async () => {
     dsn = await createTestDatabase();
@@ -68,9 +69,9 @@ describe("telemetry kernel (WMS-109 / S0.8)", () => {
     });
     assert.equal(complete.statusCode, 200);
     tenantA = complete.json().tenantId as string;
-    const pool = getRuntimePool();
-    assert.ok(pool);
-    const ins = await pool!.query<{ id: string }>(
+    runtimePool = getRuntimePool();
+    assert.ok(runtimePool);
+    const ins = await runtimePool.query<{ id: string }>(
       `INSERT INTO tenants (slug, name) VALUES ('tenant-b', 'B') RETURNING id`,
     );
     tenantB = ins.rows[0]!.id;
@@ -78,8 +79,7 @@ describe("telemetry kernel (WMS-109 / S0.8)", () => {
 
   after(async () => {
     await app.close();
-    const pool = getRuntimePool();
-    await pool?.end();
+    await runtimePool?.end();
     setRuntimePool(null);
     delete process.env.DATABASE_URL;
     await dropTestDatabase();
