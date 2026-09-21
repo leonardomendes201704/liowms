@@ -3,6 +3,8 @@ import type { BootstrapRole, AuthUserProfile } from "@liowms/shared";
 export interface RequestAuthContext {
   user: AuthUserProfile;
   sessionId: string;
+  /** JWT `tid` or validated `x-lio-tenant-id` header. */
+  activeTenantId?: string;
 }
 
 export function hasBootstrapRole(

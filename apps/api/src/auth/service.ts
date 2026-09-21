@@ -81,6 +81,7 @@ async function enqueueOutbox(
 export async function loginWithPassword(
   email: string,
   password: string,
+  activeTenantId?: string,
 ): Promise<
   | { ok: true; sessionToken: string; jwt: string; user: AuthUserProfile }
   | { ok: false; code: string; message: string }
@@ -118,11 +119,6 @@ export async function loginWithPassword(
     [user.id, tokenHash, expiresAt],
   );
 
-  const meta = await readInstallMeta(pool);
-  const jwt = meta
-    ? signSessionJwt(user.id, meta.server_secret)
-    : sessionToken;
-
   const profile = await loadUserProfile(user.id);
   if (!profile) {
     return {
@@ -132,6 +128,26 @@ export async function loginWithPassword(
     };
   }
 
+  let jwtTenantId: string | undefined;
+  if (activeTenantId?.trim()) {
+    const tid = activeTenantId.trim();
+    const allowed =
+      profile.roles.includes("super_admin") || profile.tenantIds.includes(tid);
+    if (!allowed) {
+      return {
+        ok: false,
+        code: AUTH_ERROR_FORBIDDEN,
+        message: "Tenant não permitido para este usuário",
+      };
+    }
+    jwtTenantId = tid;
+  }
+
+  const meta = await readInstallMeta(pool);
+  const jwt = meta
+    ? signSessionJwt(user.id, meta.server_secret, jwtTenantId)
+    : sessionToken;
+
   safeLog("info", "auth_login_ok", { userId: user.id });
   return { ok: true, sessionToken, jwt, user: profile };
 }
@@ -139,7 +155,11 @@ export async function loginWithPassword(
 export async function resolveSession(
   sessionToken: string | undefined,
   bearerJwt: string | undefined,
-): Promise<{ sessionId: string; user: AuthUserProfile } | null> {
+): Promise<{
+  sessionId: string;
+  user: AuthUserProfile;
+  activeTenantId?: string;
+} | null> {
   const pool = getRuntimePool();
   if (!pool) {
     return null;
@@ -172,7 +192,20 @@ export async function resolveSession(
     }
     const user = await loadUserProfile(claims.userId);
     if (user) {
-      return { sessionId: "jwt", user };
+      let activeTenantId = claims.tenantId;
+      if (activeTenantId) {
+        const allowed =
+          user.roles.includes("super_admin") ||
+          user.tenantIds.includes(activeTenantId);
+        if (!allowed) {
+          activeTenantId = undefined;
+        }
+      }
+      return {
+        sessionId: "jwt",
+        user,
+        activeTenantId,
+      };
     }
   }
 
