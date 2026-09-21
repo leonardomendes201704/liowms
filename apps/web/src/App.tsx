@@ -12,7 +12,9 @@ import { TenantPlantsPage } from "./pages/TenantPlantsPage";
 import { TenantInvitePage } from "./pages/TenantInvitePage";
 import { TenantSettingsPage } from "./pages/TenantSettingsPage";
 import { TenantAuditPage } from "./pages/TenantAuditPage";
+import { TenantLedgerPage } from "./pages/TenantLedgerPage";
 import { AppAuditRedirect } from "./pages/AppAuditRedirect";
+import { AppLedgerRedirect } from "./pages/AppLedgerRedirect";
 import { InviteAcceptPage } from "./pages/InviteAcceptPage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -37,6 +39,7 @@ export function App() {
         >
           <Route index element={<AppHomeRedirect />} />
           <Route path="audit" element={<AppAuditRedirect />} />
+          <Route path="ledger" element={<AppLedgerRedirect />} />
           <Route path="forbidden" element={<ForbiddenPage />} />
           <Route
             path="platform/tenants"
@@ -67,6 +70,14 @@ export function App() {
             element={
               <RequireTenantAccess>
                 <TenantAuditPage />
+              </RequireTenantAccess>
+            }
+          />
+          <Route
+            path="t/:tenantId/ledger"
+            element={
+              <RequireTenantAccess>
+                <TenantLedgerPage />
               </RequireTenantAccess>
             }
           />

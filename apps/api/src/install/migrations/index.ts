@@ -13,6 +13,7 @@ export const MIGRATION_VERSIONS = [
   "003_tenant_rls",
   "004_config_store",
   "005_audit_log",
+  "006_inventory_ledger",
 ] as const;
 export const LATEST_MIGRATION = MIGRATION_VERSIONS[MIGRATION_VERSIONS.length - 1];
 

@@ -49,6 +49,12 @@ export function AppShellPage() {
               >
                 Auditoria (K10)
               </Link>
+              <Link
+                to={`/app/t/${user.tenantIds[0]}/ledger`}
+                className={styles.mockLink}
+              >
+                Estoque (K11)
+              </Link>
             </>
           ) : null}
           <button type="button" className={styles.btnGhost} onClick={onLogout}>
