@@ -1,0 +1,10 @@
+{
+  "name": "@liowms/shared",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo \"shared build\"",
+    "test": "echo \"shared test\""
+  }
+}

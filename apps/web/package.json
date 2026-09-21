@@ -1,0 +1,11 @@
+{
+  "name": "@liowms/web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo \"web build — WMS-88\"",
+    "dev": "echo \"web dev — WMS-88\"",
+    "test": "echo \"web test — WMS-88\""
+  }
+}

@@ -20,7 +20,13 @@ packages/shared/
 
 ## Pack / design
 
-Planning and ADRs live in the Paperclip LioWMS project workspace (not duplicated here). UI mocks: MinIO gallery `OBJ-LIOWMS-001/design/`.
+Engineering pack and ADRs live in the Paperclip **LioWMS** project workspace (OBJ-LIOWMS-001) — not duplicated in this repo:
+
+- Install / wizard / health: **ADR-003** (`install` module, install lock, `installed` health)
+- In-app secrets (no business `.env`): **ADR-004** (envelope in DB)
+- Architecture: **ADR-006** (this monorepo layout)
+
+Canonical pack path (company vault): `/srv/work/second-brain/11-projects/OBJ-LIOWMS-001/`. UI mocks: MinIO gallery `OBJ-LIOWMS-001/design/`.
 
 ## Local dev
 

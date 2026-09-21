@@ -1,0 +1,11 @@
+{
+  "name": "@liowms/api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo \"api build — WMS-87\"",
+    "dev": "echo \"api dev — WMS-87\"",
+    "test": "echo \"api test — WMS-87\""
+  }
+}
