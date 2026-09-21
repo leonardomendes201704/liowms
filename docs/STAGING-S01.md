@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|--------|
-| **Base URL** | https://essex-reach-consultant-genetic.trycloudflare.com |
+| **Base URL** | https://pierce-playstation-mail-kay.trycloudflare.com |
 | **Wizard** | `/install` |
 | **Health** | `/health` (expect `installed: false` after Release DB reset) |
-| **Git** | https://github.com/leonardomendes201704/liowms @ `main` → `32f3358` |
+| **Git** | https://github.com/leonardomendes201704/liowms @ `main` → `9ef39e3` |
 | **Postgres slot** | `app_staging` (company Docker Postgres) |
 
 ## Ops notes (Release)
