@@ -44,6 +44,12 @@ export function AppShellPage() {
                 E-mail (K14)
               </Link>
               <Link
+                to={`/app/t/${user.tenantIds[0]}/kernel`}
+                className={styles.mockLink}
+              >
+                Telemetria (K12)
+              </Link>
+              <Link
                 to={`/app/t/${user.tenantIds[0]}/settings`}
                 className={styles.mockLink}
               >

@@ -7,3 +7,5 @@ export * from "./tenant-settings.js";
 export * from "./tenant-audit.js";
 export * from "./tenant-ledger.js";
 export * from "./tenant-notify.js";
+export * from "./telemetry.js";
+export * from "./tenant-kernel.js";

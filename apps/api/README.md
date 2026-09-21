@@ -22,7 +22,9 @@ Optional infra DSN (Release / local after install): `DATABASE_URL` — never com
 | `service` | `liowms-api` |
 | `version` | API semver |
 | `migrations.applied` / `migrations.latest` | Schema migration state |
-| `queues.ready` / `queues.detail` | Outbox worker (S0.7: `outbox:worker`) |
+| `queues.ready` / `queues.detail` | Outbox worker + backlog (`outbox:worker=on\|off;pending=N;dlq=M`) — S0.8 |
+
+Env: `LIOWMS_OTLP_ENDPOINT` — OTLP export **hook** (config-only log at startup; no collector traffic in S0.8).
 
 ## Install wizard API (`/api/v1/install/*`)
 
@@ -61,6 +63,14 @@ In-process worker (`notify/worker.ts`) polls `notify_outbox`, sends `user_invite
 | `POST` | `/api/v1/tenant/notify-outbox/:id/retry` | DLQ or failed only |
 
 Secrets are envelope-encrypted (ADR-004); responses never include cleartext. SMTP saves enqueue `smtp_config_saved` (skipped delivery). **PATCH** settings writes audit (S0.5).
+
+## Telemetry / kernel status (S0.8 — WMS-109 / K12)
+
+| Method | Path | Notes |
+|--------|------|-------|
+| `GET` | `/api/v1/tenant/kernel-status` | Read-only health + outbox counts + aggregated counters (H-3) |
+
+Optional plain setting `telemetry.otlp.endpoint` or env `LIOWMS_OTLP_ENDPOINT` — OTLP **hook** only (no collector export in S0.8).
 
 ## Tenant settings (`/api/v1/tenant/settings`) — S0.4 / WMS-94
 

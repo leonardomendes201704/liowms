@@ -15,6 +15,7 @@ export const MIGRATION_VERSIONS = [
   "005_audit_log",
   "006_inventory_ledger",
   "007_notify_outbox_s07",
+  "008_telemetry_s08",
 ] as const;
 export const LATEST_MIGRATION = MIGRATION_VERSIONS[MIGRATION_VERSIONS.length - 1];
 

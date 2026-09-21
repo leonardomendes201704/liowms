@@ -17,6 +17,8 @@ import { AppAuditRedirect } from "./pages/AppAuditRedirect";
 import { AppLedgerRedirect } from "./pages/AppLedgerRedirect";
 import { AppOutboxRedirect } from "./pages/AppOutboxRedirect";
 import { TenantOutboxPage } from "./pages/TenantOutboxPage";
+import { AppKernelRedirect } from "./pages/AppKernelRedirect";
+import { TenantKernelHealthPage } from "./pages/TenantKernelHealthPage";
 import { InviteAcceptPage } from "./pages/InviteAcceptPage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -43,6 +45,7 @@ export function App() {
           <Route path="audit" element={<AppAuditRedirect />} />
           <Route path="ledger" element={<AppLedgerRedirect />} />
           <Route path="outbox" element={<AppOutboxRedirect />} />
+          <Route path="kernel" element={<AppKernelRedirect />} />
           <Route path="forbidden" element={<ForbiddenPage />} />
           <Route
             path="platform/tenants"
@@ -89,6 +92,14 @@ export function App() {
             element={
               <RequireTenantAccess>
                 <TenantOutboxPage />
+              </RequireTenantAccess>
+            }
+          />
+          <Route
+            path="t/:tenantId/kernel"
+            element={
+              <RequireTenantAccess>
+                <TenantKernelHealthPage />
               </RequireTenantAccess>
             }
           />

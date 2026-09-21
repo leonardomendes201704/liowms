@@ -9,6 +9,7 @@ import {
   type DbOutboxRow,
 } from "./service.js";
 import { createSmtpTransport, renderOutboxEmail, sendRenderedEmail } from "./mailer.js";
+import { incrementTelemetryCounter } from "../telemetry/service.js";
 
 const DEFAULT_BATCH = 10;
 const DEFAULT_INTERVAL_MS = 5000;
@@ -113,6 +114,7 @@ async function deliverRow(row: DbOutboxRow): Promise<void> {
     try {
       await markOutboxSent(client, row.id);
       recordSend(tenantId);
+      void incrementTelemetryCounter(tenantId, "notify.sent").catch(() => {});
       safeLog("info", "notify_outbox_sent", {
         tenantId,
         messageId: row.id,
@@ -127,6 +129,7 @@ async function deliverRow(row: DbOutboxRow): Promise<void> {
     const client = await pool.connect();
     try {
       await markOutboxFailure(client, row.id, row.attempts + 1, message);
+      void incrementTelemetryCounter(tenantId, "notify.failed").catch(() => {});
       safeLog("error", "notify_outbox_failed", {
         tenantId,
         messageId: row.id,
