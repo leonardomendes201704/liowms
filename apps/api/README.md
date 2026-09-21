@@ -65,6 +65,7 @@ Secrets are envelope-encrypted (ADR-004); responses never include cleartext. SMT
 ## Tests
 
 ```bash
+# Admin DSN must allow CREATE DATABASE (company `postgres` superuser or role with CREATEDB).
 LIOWMS_TEST_PG_ADMIN_DSN='postgresql://…' npm run test -w @liowms/api
 ```
 
