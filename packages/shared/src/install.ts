@@ -16,3 +16,9 @@ export function installK4Error(
 ): InstallErrorBody {
   return { code, message, screen: "K4" };
 }
+
+/** REST paths implemented by `@liowms/api` (WMS-87). */
+export const INSTALL_HTTP = {
+  testDsn: "/api/v1/install/dsn/test",
+  complete: "/api/v1/install/complete",
+} as const;
