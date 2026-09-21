@@ -1,0 +1,10 @@
+{
+  "name": "liowms",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "build": "npm run build -ws --if-present",
+    "test": "npm run test -ws --if-present"
+  },
+  "engines": { "node": ">=20" }
+}

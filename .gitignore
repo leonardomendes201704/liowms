@@ -1,0 +1,12 @@
+# Secrets — business config lives in DB post-install (ADR-003)
+.env
+.env.*
+!.env.example
+
+node_modules/
+dist/
+build/
+.turbo/
+coverage/
+*.log
+.DS_Store
