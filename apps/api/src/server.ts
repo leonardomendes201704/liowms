@@ -4,6 +4,7 @@ import { registerHealthRoutes } from "./health/routes.js";
 import { registerInstallRoutes } from "./install/routes.js";
 import { registerInstallGuards } from "./guards.js";
 import { registerPlatformRoutes } from "./platform/routes.js";
+import { registerTenantRoutes } from "./tenant/routes.js";
 import { refreshRuntimePoolFromInfra } from "./install/state.js";
 
 export async function buildServer() {
@@ -18,6 +19,7 @@ export async function buildServer() {
   await registerInstallRoutes(app);
   await registerAuthRoutes(app);
   await registerPlatformRoutes(app);
+  await registerTenantRoutes(app);
   await registerInstallGuards(app);
 
   return app;

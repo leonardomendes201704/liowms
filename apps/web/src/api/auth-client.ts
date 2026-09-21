@@ -83,3 +83,29 @@ export async function confirmPasswordReset(
   }
   return readJson<AuthErrorBody>(res);
 }
+
+export async function createInvite(input: {
+  email: string;
+  tenantId: string;
+  role: "tenant_admin" | "operator";
+}): Promise<{ ok: true; inviteId: string } | AuthErrorBody> {
+  const res = await fetch(AUTH_HTTP.invites, {
+    ...jsonOpts,
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+  return readJson(res);
+}
+
+export async function acceptInvite(input: {
+  token: string;
+  password: string;
+  displayName: string;
+}): Promise<{ ok: true; userId: string } | AuthErrorBody> {
+  const res = await fetch(AUTH_HTTP.invitesAccept, {
+    ...jsonOpts,
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+  return readJson(res);
+}

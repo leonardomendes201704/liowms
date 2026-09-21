@@ -140,6 +140,8 @@ export async function completeInstall(input: InstallCompleteInput) {
     );
     const tenantId = tenantRes.rows[0].id;
 
+    await client.query(`SELECT set_config('app.tenant_id', $1, true)`, [tenantId]);
+
     await client.query(
       `INSERT INTO platform_users (email, display_name, password_hash, is_super_admin)
        VALUES ($1, $2, $3, true)`,

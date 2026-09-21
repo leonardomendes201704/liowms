@@ -10,6 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export const MIGRATION_VERSIONS = [
   "001_install_kernel",
   "002_auth_session",
+  "003_tenant_rls",
 ] as const;
 export const LATEST_MIGRATION = MIGRATION_VERSIONS[MIGRATION_VERSIONS.length - 1];
 
