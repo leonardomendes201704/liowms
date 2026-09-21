@@ -6,7 +6,7 @@
 | **Executor** | QA agent heartbeat |
 | **Date** | 2026-09-21 UTC |
 | **Environment** | Company runner — local Postgres + Node 20 integration/unit tests |
-| **Staging HTTPS** | **NOT RUN** — tunnel down (`530` on prior hostname); Release track PAP-151 owns restage after `origin/main` push |
+| **Staging HTTPS** | **PASS** (post [PAP-151](/PAP/issues/PAP-151)) — https://pierce-playstation-mail-kay.trycloudflare.com · see [staging evidence](/api/attachments/69c8caae-4563-4a16-b934-98d2d19cc56a/content) |
 
 ## Scope (READY-1 / WMS-26)
 
@@ -30,5 +30,5 @@ Full API log: run scratch `api-test.log` (this heartbeat).
 
 ## Notes
 
-- Remote `origin/main` still at `e738955` at time of run; staging URL in `docs/STAGING-S01.md` not updated for S0.3 until Release push + restage.
-- Post-push: re-run J0b/J12 on staging HTTPS and append a sibling evidence file.
+- Release pushed `origin/main` through `5bbb50a`+ (S0.3 @ `9ef39e3`); staging URL in `docs/STAGING-S01.md`.
+- Staging TC-GOLD re-run: [PAP-150 staging evidence](/api/attachments/69c8caae-4563-4a16-b934-98d2d19cc56a/content) (J0b/J12 PASS).
