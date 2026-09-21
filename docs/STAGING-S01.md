@@ -11,6 +11,7 @@
 ## Ops notes (Release)
 
 - Tunnel: Cloudflare quick tunnel (`cloudflared`) → local Vite `5173` (proxies `/api`, `/health`).
+- **Vite host check:** `apps/web/vite.config.ts` allows `*.trycloudflare.com`. After changing that file or pulling `main`, **restart** `@liowms/web` dev or Board will see HTTP 403 (`server.allowedHosts`). Optional runner env: `LIOWMS_STAGING_PREVIEW=1` (allow all hosts) or `LIOWMS_VITE_ALLOWED_HOST=<hostname>` for a one-off tunnel domain.
 - **Liveness:** URL is valid while `cloudflared`, `@liowms/api`, and `@liowms/web` dev processes are running on the company runner.
 - **Follow-up:** durable hostname on `*.insta-ads.online` via Caddy (CTO/infra) — not blocked for S0.1 J0 remote pass.
 - DSN for wizard: company secret `DATABASE_URL_STAGING` — never paste in Plane/Paperclip comments.
