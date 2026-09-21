@@ -43,6 +43,12 @@ export function AppShellPage() {
               >
                 Configurações (K9)
               </Link>
+              <Link
+                to={`/app/t/${user.tenantIds[0]}/audit`}
+                className={styles.mockLink}
+              >
+                Auditoria (K10)
+              </Link>
             </>
           ) : null}
           <button type="button" className={styles.btnGhost} onClick={onLogout}>

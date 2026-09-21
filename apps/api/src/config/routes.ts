@@ -67,7 +67,9 @@ export async function registerConfigRoutes(app: FastifyInstance) {
     }
     const body = (req.body ?? {}) as TenantSettingsPatchBody;
     try {
-      const settings = await patchTenantSettings(tenantId, body);
+      const settings = await patchTenantSettings(tenantId, body, {
+        actorUserId: auth.user.id,
+      });
       return reply.send({ settings });
     } catch (err) {
       const message = err instanceof Error ? err.message : "invalid_settings";

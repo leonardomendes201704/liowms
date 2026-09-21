@@ -5,6 +5,7 @@ import { registerInstallRoutes } from "./install/routes.js";
 import { registerInstallGuards } from "./guards.js";
 import { registerPlatformRoutes } from "./platform/routes.js";
 import { registerConfigRoutes } from "./config/routes.js";
+import { registerAuditRoutes } from "./audit/routes.js";
 import { registerTenantRoutes } from "./tenant/routes.js";
 import {
   applyPendingMigrationsOnStartup,
@@ -26,6 +27,7 @@ export async function buildServer() {
   await registerPlatformRoutes(app);
   await registerTenantRoutes(app);
   await registerConfigRoutes(app);
+  await registerAuditRoutes(app);
   await registerInstallGuards(app);
 
   return app;

@@ -167,6 +167,10 @@ export function TenantSettingsPage() {
         <Link to={`/app/t/${tenantId}/plants`} className={styles.mockLink}>
           Plantas (K7)
         </Link>
+        {" · "}
+        <Link to={`/app/t/${tenantId}/audit`} className={styles.mockLink}>
+          Auditoria (K10)
+        </Link>
       </p>
       <p className={styles.fieldHint}>{k9SettingsLead()}</p>
 

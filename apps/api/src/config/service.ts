@@ -5,6 +5,9 @@ import {
   type TenantSettingEntry,
   type TenantSettingsPatchBody,
 } from "@liowms/shared";
+import type { PoolClient } from "pg";
+import { appendAuditEvent } from "../audit/writer.js";
+import { settingsEntriesToAuditMap } from "../audit/redact.js";
 import { openValue, sealValue } from "../crypto/envelope.js";
 import { withDbScope } from "../db/tenant-scope.js";
 import { safeLog } from "../logging.js";
@@ -38,60 +41,109 @@ async function enqueueSmtpConfigStub(tenantId: string): Promise<void> {
   safeLog("info", "smtp_config_saved", { tenantId });
 }
 
+async function loadTenantSettingsEntries(
+  client: PoolClient,
+  tenantId: string,
+): Promise<TenantSettingEntry[]> {
+  const plainRes = await client.query<{ key: string; value_json: unknown }>(
+    `SELECT key, value_json FROM config_settings WHERE tenant_id = $1 ORDER BY key`,
+    [tenantId],
+  );
+  const secretRes = await client.query<{ key: string }>(
+    `SELECT key FROM config_secrets
+     WHERE tenant_id = $1 AND key <> 'envelope.bootstrap'
+     ORDER BY key`,
+    [tenantId],
+  );
+
+  const entries: TenantSettingEntry[] = plainRes.rows.map((row) => ({
+    key: row.key,
+    kind: "plain" as const,
+    value: row.value_json,
+  }));
+
+  for (const row of secretRes.rows) {
+    entries.push({
+      key: row.key,
+      kind: "secret",
+      display: SECRET_MASK,
+      set: true,
+    });
+  }
+
+  for (const key of KNOWN_SECRET_SETTING_KEYS) {
+    if (!secretRes.rows.some((r) => r.key === key)) {
+      entries.push({
+        key,
+        kind: "secret",
+        display: SECRET_MASK,
+        set: false,
+      });
+    }
+  }
+
+  entries.sort((a, b) => a.key.localeCompare(b.key));
+  return entries;
+}
+
 export async function getTenantSettings(
   tenantId: string,
 ): Promise<TenantSettingEntry[]> {
-  return withDbScope({ tenantId }, async (client) => {
-    const plainRes = await client.query<{ key: string; value_json: unknown }>(
-      `SELECT key, value_json FROM config_settings WHERE tenant_id = $1 ORDER BY key`,
-      [tenantId],
-    );
-    const secretRes = await client.query<{ key: string }>(
-      `SELECT key FROM config_secrets
-       WHERE tenant_id = $1 AND key <> 'envelope.bootstrap'
-       ORDER BY key`,
-      [tenantId],
-    );
+  return withDbScope({ tenantId }, async (client) =>
+    loadTenantSettingsEntries(client, tenantId),
+  );
+}
 
-    const entries: TenantSettingEntry[] = plainRes.rows.map((row) => ({
-      key: row.key,
-      kind: "plain" as const,
-      value: row.value_json,
-    }));
-
-    for (const row of secretRes.rows) {
-      entries.push({
-        key: row.key,
-        kind: "secret",
-        display: SECRET_MASK,
-        set: true,
-      });
+function buildConfigPatchAuditJson(
+  beforeMap: Record<string, unknown>,
+  afterMap: Record<string, unknown>,
+  body: TenantSettingsPatchBody,
+): { beforeJson: Record<string, unknown>; afterJson: Record<string, unknown> } {
+  const beforeJson: Record<string, unknown> = {};
+  const afterJson: Record<string, unknown> = {};
+  const keys = new Set<string>();
+  if (body.plain) {
+    for (const key of Object.keys(body.plain)) {
+      keys.add(key);
     }
-
-    for (const key of KNOWN_SECRET_SETTING_KEYS) {
-      if (!secretRes.rows.some((r) => r.key === key)) {
-        entries.push({
-          key,
-          kind: "secret",
-          display: SECRET_MASK,
-          set: false,
-        });
-      }
+  }
+  if (body.secrets) {
+    for (const key of Object.keys(body.secrets)) {
+      keys.add(key);
     }
+  }
+  for (const key of keys) {
+    beforeJson[key] = beforeMap[key] ?? null;
+    if (body.secrets && key in body.secrets) {
+      afterJson[key] = SECRET_MASK;
+    } else {
+      afterJson[key] = afterMap[key] ?? null;
+    }
+  }
+  return { beforeJson, afterJson };
+}
 
-    entries.sort((a, b) => a.key.localeCompare(b.key));
-    return entries;
-  });
+export interface PatchTenantSettingsOptions {
+  actorUserId?: string;
 }
 
 export async function patchTenantSettings(
   tenantId: string,
   body: TenantSettingsPatchBody,
+  options?: PatchTenantSettingsOptions,
 ): Promise<TenantSettingEntry[]> {
   const masterKey = await loadEnvelopeMasterKey();
   let smtpTouched = false;
+  const hasPatch =
+    (body.plain && Object.keys(body.plain).length > 0) ||
+    (body.secrets && Object.keys(body.secrets).length > 0);
 
   await withDbScope({ tenantId }, async (client) => {
+    const beforeEntries = hasPatch
+      ? await loadTenantSettingsEntries(client, tenantId)
+      : [];
+    const beforeMap = settingsEntriesToAuditMap(beforeEntries);
+
     if (body.plain) {
       for (const [key, value] of Object.entries(body.plain)) {
         if (isKnownSecretKey(key)) {
@@ -141,6 +193,25 @@ export async function patchTenantSettings(
         );
         smtpTouched = true;
       }
+    }
+
+    if (hasPatch && options?.actorUserId) {
+      const afterEntries = await loadTenantSettingsEntries(client, tenantId);
+      const afterMap = settingsEntriesToAuditMap(afterEntries);
+      const { beforeJson, afterJson } = buildConfigPatchAuditJson(
+        beforeMap,
+        afterMap,
+        body,
+      );
+      await appendAuditEvent(client, {
+        tenantId,
+        actorUserId: options.actorUserId,
+        action: "update",
+        entityType: "config_setting",
+        entityKey: "tenant.settings",
+        beforeJson,
+        afterJson,
+      });
     }
   });
 

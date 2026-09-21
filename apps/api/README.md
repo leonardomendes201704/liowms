@@ -60,7 +60,11 @@ Requires **tenant_admin** or **super_admin**. Use header `x-lio-tenant-id` when 
 | `GET` | `/api/v1/tenant/settings` | — |
 | `PATCH` | `/api/v1/tenant/settings` | `{ "plain": { "smtp.host": "…" }, "secrets": { "smtp.password": "…" } }` |
 
-Secrets are envelope-encrypted (ADR-004); responses never include cleartext. SMTP saves enqueue `smtp_config_saved` on `notify_outbox` (stub).
+Secrets are envelope-encrypted (ADR-004); responses never include cleartext. SMTP saves enqueue `smtp_config_saved` on `notify_outbox` (stub). **PATCH** writes an append-only row in `audit.audit_events` (secrets masked per ADR-004).
+
+## Tenant audit log (`/api/v1/tenant/audit-events`) — S0.5 / WMS-97
+
+Read-only for **tenant_admin** / **super_admin**. Query: `page`, `limit`, `actor`, `entity_type`, `from`, `to`. **PATCH/DELETE/POST** return **405** (append-only).
 
 ## Tests
 
@@ -69,6 +73,6 @@ Secrets are envelope-encrypted (ADR-004); responses never include cleartext. SMT
 LIOWMS_TEST_PG_ADMIN_DSN='postgresql://…' npm run test -w @liowms/api
 ```
 
-Covers TC-GOLD **J0-02** (health), **J0-04** (migration rollback), and **WMS-89** (login K5, J0c-02 reset happy path, invite).
+Covers TC-GOLD **J0-02** (health), **J0-04** (migration rollback), **WMS-89** (login K5, J0c-02 reset happy path, invite), **WMS-97** (**J0d-02** immutability + config PATCH audit writer smoke).
 
 Pack: ADR-003, ADR-004 · `04-quality/test-cases.md`

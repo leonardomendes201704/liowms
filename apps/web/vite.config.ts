@@ -1,4 +1,5 @@
-import { defineConfig } from "vite";
+/// <reference types="vitest/config" />
+import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 
@@ -21,6 +22,10 @@ export default defineConfig({
     alias: {
       "@liowms/shared": path.resolve(__dirname, "../../packages/shared/src/index.ts"),
     },
+  },
+  test: {
+    environment: "jsdom",
+    css: true,
   },
   server: {
     port: 5173,

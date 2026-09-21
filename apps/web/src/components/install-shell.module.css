@@ -355,6 +355,97 @@
   gap: var(--lio-space-md);
 }
 
+.auditFilters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--lio-space-md);
+  margin-bottom: var(--lio-space-lg);
+}
+
+.auditLayout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lio-space-lg);
+  margin-top: var(--lio-space-md);
+}
+
+.auditTableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--lio-color-border);
+  border-radius: var(--lio-radius-md);
+}
+
+.auditTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.auditCaption {
+  caption-side: top;
+  text-align: left;
+  padding: var(--lio-space-sm) var(--lio-space-md);
+  font-weight: 600;
+  color: var(--lio-color-primary);
+}
+
+.auditTable th,
+.auditTable td {
+  padding: var(--lio-space-sm) var(--lio-space-md);
+  border-bottom: 1px solid var(--lio-color-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.auditTable th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--lio-color-text-muted);
+  background: var(--lio-color-border);
+}
+
+.auditRowSelected {
+  background: var(--lio-color-success-bg);
+}
+
+.auditRowButton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.auditDiffPanel {
+  border: 1px solid var(--lio-color-border);
+  border-radius: var(--lio-radius-md);
+  padding: var(--lio-space-md);
+}
+
+.auditDiffHeading {
+  margin: 0 0 var(--lio-space-sm);
+  font-size: 14px;
+  color: var(--lio-color-text-muted);
+}
+
+.auditDiffPre {
+  margin: 0;
+  padding: var(--lio-space-sm);
+  max-height: 280px;
+  overflow: auto;
+  font-size: 12px;
+  line-height: 1.45;
+  background: var(--lio-color-border);
+  border-radius: var(--lio-radius-sm);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 @media (max-width: 640px) {
   .stepperList {
     grid-template-columns: repeat(2, 1fr);

@@ -135,5 +135,5 @@ export function k9SaveSuccessMessage(): string {
 }
 
 export function k9SettingsLead(): string {
-  return "SMTP e identidade visual do tenant. Senhas de integração são armazenadas com envelope (ADR-004); o histórico de auditoria completo chega em versão futura.";
+  return "SMTP e identidade visual do tenant. Senhas de integração são armazenadas com envelope (ADR-004); alterações geram eventos no registro de auditoria (K10).";
 }
