@@ -29,6 +29,12 @@ interface BalanceRow {
   balance: string;
 }
 
+/** Postgres numeric::text may include trailing zeros (e.g. 15.000000). */
+function normalizeDecimalString(value: string): string {
+  const n = Number(value);
+  return Number.isFinite(n) ? String(n) : value;
+}
+
 function mapTx(row: TxRow): InventoryTransactionRecord {
   return {
     id: row.id,
@@ -40,7 +46,7 @@ function mapTx(row: TxRow): InventoryTransactionRecord {
     documentRef: row.document_ref,
     lotCode: row.lot_code,
     locationCode: row.location_code,
-    quantityDelta: row.quantity_delta,
+    quantityDelta: normalizeDecimalString(row.quantity_delta),
     uom: row.uom,
     idempotencyKey: row.idempotency_key,
   };
@@ -52,7 +58,7 @@ function mapBalance(row: BalanceRow): InventoryBalanceRow {
     lotCode: row.lot_code,
     locationCode: row.location_code,
     uom: row.uom,
-    balance: row.balance,
+    balance: normalizeDecimalString(row.balance),
   };
 }
 
@@ -250,6 +256,7 @@ export async function sumLotQuantity(
        WHERE lot_code = $1`,
       [lotCode.trim()],
     );
-    return res.rows[0]?.s ?? "0";
+    const raw = res.rows[0]?.s ?? "0";
+    return normalizeDecimalString(raw);
   });
 }
