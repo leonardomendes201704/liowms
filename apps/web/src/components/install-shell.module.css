@@ -1,0 +1,302 @@
+.shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--lio-space-xl) var(--lio-space-md) var(--lio-space-xl);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lio-space-md);
+  margin-bottom: var(--lio-space-lg);
+}
+
+.brand {
+  display: flex;
+  gap: var(--lio-space-md);
+  align-items: center;
+}
+
+.logoMark {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--lio-radius-md);
+  background: linear-gradient(135deg, var(--lio-color-primary), var(--lio-color-accent));
+  box-shadow: var(--lio-shadow-card);
+}
+
+.brandEyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lio-color-accent);
+}
+
+.brandTitle {
+  margin: var(--lio-space-xs) 0 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--lio-color-primary);
+}
+
+.mockLink {
+  font-size: 12px;
+  color: var(--lio-color-accent);
+  text-decoration: none;
+}
+
+.mockLink:hover {
+  text-decoration: underline;
+}
+
+.stepper {
+  margin-bottom: var(--lio-space-lg);
+}
+
+.stepperList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--lio-space-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stepperItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lio-space-xs);
+  text-align: center;
+  font-size: 11px;
+  color: var(--lio-color-text-muted);
+}
+
+.stepperItem[data-state="current"] {
+  color: var(--lio-color-primary);
+  font-weight: 600;
+}
+
+.stepperItem[data-state="done"] {
+  color: var(--lio-color-success);
+}
+
+.stepperIndex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 2px solid var(--lio-color-border);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.stepperItem[data-state="current"] .stepperIndex {
+  border-color: var(--lio-color-accent);
+  background: var(--lio-color-accent);
+  color: #fff;
+}
+
+.stepperItem[data-state="done"] .stepperIndex {
+  border-color: var(--lio-color-success);
+  background: var(--lio-color-success-bg);
+  color: var(--lio-color-success);
+}
+
+.card {
+  background: var(--lio-color-surface-elevated);
+  border: 1px solid var(--lio-color-border);
+  border-radius: var(--lio-radius-lg);
+  box-shadow: var(--lio-shadow-card);
+  padding: var(--lio-space-xl);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lio-space-xs);
+  margin-bottom: var(--lio-space-md);
+}
+
+.fieldLabel {
+  font-weight: 500;
+  color: var(--lio-color-text);
+}
+
+.fieldInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--lio-color-border);
+  border-radius: var(--lio-radius-md);
+  font: inherit;
+  color: var(--lio-color-text);
+  background: #fff;
+}
+
+.fieldInput:focus {
+  outline: 2px solid var(--lio-color-accent);
+  outline-offset: 1px;
+}
+
+.fieldMasked {
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.02em;
+}
+
+.fieldHint {
+  font-size: 12px;
+  color: var(--lio-color-text-muted);
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lio-space-sm);
+  min-width: 160px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--lio-radius-md);
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(180deg, var(--lio-color-accent), var(--lio-color-primary));
+  cursor: pointer;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btnSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--lio-space-sm);
+  margin-top: var(--lio-space-lg);
+}
+
+.btnGhost {
+  padding: 10px 16px;
+  border: 1px solid var(--lio-color-border);
+  border-radius: var(--lio-radius-md);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  color: var(--lio-color-text-muted);
+}
+
+.errorPanel {
+  border-left: 4px solid var(--lio-color-danger);
+  padding-left: var(--lio-space-md);
+}
+
+.errorTitle {
+  margin: 0 0 var(--lio-space-sm);
+  font-size: 18px;
+  color: var(--lio-color-danger);
+}
+
+.errorMessage {
+  margin: 0 0 var(--lio-space-md);
+  color: var(--lio-color-text);
+}
+
+.errorLog {
+  margin: 0 0 var(--lio-space-md);
+  padding: var(--lio-space-sm);
+  background: var(--lio-color-danger-bg);
+  border-radius: var(--lio-radius-md);
+  font-size: 12px;
+  overflow-x: auto;
+}
+
+.errorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lio-space-sm);
+  align-items: center;
+}
+
+.successPanel {
+  text-align: center;
+  padding: var(--lio-space-md) 0;
+}
+
+.successIcon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto var(--lio-space-md);
+  border-radius: 50%;
+  background: var(--lio-color-success-bg);
+  color: var(--lio-color-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.sectionTitle {
+  margin: 0 0 var(--lio-space-sm);
+  font-size: 18px;
+  color: var(--lio-color-primary);
+}
+
+.sectionLead {
+  margin: 0 0 var(--lio-space-lg);
+  color: var(--lio-color-text-muted);
+}
+
+.loadingScreen {
+  text-align: center;
+  padding: var(--lio-space-xl);
+  color: var(--lio-color-text-muted);
+}
+
+.linkButton {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: var(--lio-radius-md);
+  background: var(--lio-color-primary);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--lio-space-md);
+}
+
+@media (max-width: 640px) {
+  .stepperList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,42 @@
+:root {
+  --lio-color-primary: #012e5a;
+  --lio-color-accent: #294c98;
+  --lio-color-surface: #f4f6f9;
+  --lio-color-surface-elevated: #ffffff;
+  --lio-color-border: #c5ced9;
+  --lio-color-text: #1a2332;
+  --lio-color-text-muted: #5c677a;
+  --lio-color-danger: #b42318;
+  --lio-color-danger-bg: #fef3f2;
+  --lio-color-success: #027a48;
+  --lio-color-success-bg: #ecfdf3;
+  --lio-radius-md: 8px;
+  --lio-radius-lg: 12px;
+  --lio-space-xs: 4px;
+  --lio-space-sm: 8px;
+  --lio-space-md: 16px;
+  --lio-space-lg: 24px;
+  --lio-space-xl: 32px;
+  --lio-font-family: "IBM Plex Sans", system-ui, sans-serif;
+  --lio-shadow-card: 0 8px 24px rgba(1, 46, 90, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--lio-font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--lio-color-text);
+  background: linear-gradient(160deg, #e8eef6 0%, var(--lio-color-surface) 45%);
+}
+
+#root {
+  min-height: 100vh;
+}
