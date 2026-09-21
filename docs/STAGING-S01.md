@@ -5,7 +5,8 @@
 | **Base URL** | https://pierce-playstation-mail-kay.trycloudflare.com |
 | **Wizard** | `/install` |
 | **Health** | `/health` (expect `installed: false` after Release DB reset) |
-| **Git** | https://github.com/leonardomendes201704/liowms @ `main` → `68e3038` (S0.7 J0c staging PASS — [PAP-170](/PAP/issues/PAP-170)) |
+| **Git** | https://github.com/leonardomendes201704/liowms @ `main` → `b0329f2` (S0.8 exec BE+FE — [PAP-173](/PAP/issues/PAP-173); QA [WMS-111](https://app.plane.so/paperclip-company/browse/WMS-111/) pending) |
+| **K12** | `/app/t/{tenantId}/kernel` (telemetria read-only) |
 | **Postgres slot** | `app_staging` (company Docker Postgres) |
 
 ## Ops notes (Release)
