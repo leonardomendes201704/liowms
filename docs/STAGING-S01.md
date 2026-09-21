@@ -5,7 +5,7 @@
 | **Base URL** | https://pierce-playstation-mail-kay.trycloudflare.com |
 | **Wizard** | `/install` |
 | **Health** | `/health` (expect `installed: false` after Release DB reset) |
-| **Git** | https://github.com/leonardomendes201704/liowms @ `main` → `cdce935` (S0.8 exec [PAP-173](/PAP/issues/PAP-173) · QA [PAP-174](/PAP/issues/PAP-174) · release [PAP-175](/PAP/issues/PAP-175)) |
+| **Git** | https://github.com/leonardomendes201704/liowms @ `main` → `5c3ee8a` (S0.9 exec [PAP-177](/PAP/issues/PAP-177) · migration `009_platform_tenant_s09`) |
 | **K6–K8** | `/app/platform/tenants` · `/app/platform/tenants/{tenantId}` (cotas + offboarding) |
 | **K12** | `/app/t/{tenantId}/kernel` (telemetria read-only) |
 | **Postgres slot** | `app_staging` (company Docker Postgres) |
