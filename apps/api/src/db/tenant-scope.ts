@@ -11,6 +11,7 @@ export async function withDbScope<T>(
   }
   const client = await pool.connect();
   try {
+    await client.query("BEGIN");
     if (scope.bypassRls) {
       await client.query(`SELECT set_config('app.rls_bypass', '1', true)`);
     } else if (scope.tenantId) {
@@ -18,7 +19,12 @@ export async function withDbScope<T>(
         scope.tenantId,
       ]);
     }
-    return await fn(client);
+    const result = await fn(client);
+    await client.query("COMMIT");
+    return result;
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
   } finally {
     client.release();
   }
