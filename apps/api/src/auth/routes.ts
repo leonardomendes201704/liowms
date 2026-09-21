@@ -48,13 +48,22 @@ function clearSessionCookie(reply: FastifyReply): void {
 
 export async function registerAuthRoutes(app: FastifyInstance) {
   app.post(AUTH_HTTP.login, async (req, reply) => {
-    const body = req.body as { email?: string; password?: string };
+    const body = req.body as {
+      email?: string;
+      password?: string;
+      tenantId?: string;
+    };
     if (!body?.email || !body?.password) {
       return reply.status(400).send({ message: "email e password obrigatórios" });
     }
-    const result = await loginWithPassword(body.email, body.password);
+    const result = await loginWithPassword(
+      body.email,
+      body.password,
+      body.tenantId,
+    );
     if (!result.ok) {
-      return reply.status(401).send(authError(result.code, result.message));
+      const status = result.code === "AUTH_FORBIDDEN" ? 403 : 401;
+      return reply.status(status).send(authError(result.code, result.message));
     }
     setSessionCookie(reply, result.sessionToken);
     return reply.send({
@@ -116,9 +125,23 @@ export async function registerAuthRoutes(app: FastifyInstance) {
     if (!body?.email || !body?.tenantId || !body?.role) {
       return reply.status(400).send({ message: "payload incompleto" });
     }
+    const tenantId =
+      auth.activeTenantId && !auth.user.roles.includes("super_admin")
+        ? auth.activeTenantId
+        : body.tenantId;
+    if (
+      auth.activeTenantId &&
+      body.tenantId &&
+      body.tenantId !== auth.activeTenantId &&
+      !auth.user.roles.includes("super_admin")
+    ) {
+      return reply.status(403).send(
+        authError("AUTH_FORBIDDEN", "Convite fora do tenant ativo"),
+      );
+    }
     const result = await createInvite({
       email: body.email,
-      tenantId: body.tenantId,
+      tenantId: tenantId!,
       role: body.role,
       invitedBy: auth.user,
     });

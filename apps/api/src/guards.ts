@@ -4,8 +4,10 @@ import {
   AUTH_ERROR_SESSION_REQUIRED,
   INSTALL_ERROR_NOT_AVAILABLE,
   SESSION_COOKIE_NAME,
+  TENANT_CONTEXT_HEADER,
   authError,
   installK4Error,
+  userCanAccessTenant,
 } from "@liowms/shared";
 import type { RequestAuthContext } from "./auth/context.js";
 import { resolveSession } from "./auth/service.js";
@@ -85,7 +87,24 @@ export async function registerInstallGuards(app: FastifyInstance) {
       parseBearer(req),
     );
     if (session) {
-      (req as FastifyRequest & { auth: RequestAuthContext }).auth = session;
+      const headerRaw = req.headers[TENANT_CONTEXT_HEADER];
+      const headerTenant =
+        typeof headerRaw === "string"
+          ? headerRaw
+          : Array.isArray(headerRaw)
+            ? headerRaw[0]
+            : undefined;
+      let activeTenantId = session.activeTenantId;
+      if (headerTenant?.trim()) {
+        const tid = headerTenant.trim();
+        if (userCanAccessTenant(session.user, tid)) {
+          activeTenantId = tid;
+        }
+      }
+      (req as FastifyRequest & { auth: RequestAuthContext }).auth = {
+        ...session,
+        activeTenantId,
+      };
     }
 
     if (requiresSession(path) && !session) {

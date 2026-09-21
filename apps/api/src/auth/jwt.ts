@@ -7,16 +7,22 @@ function base64url(input: Buffer | string): string {
   return buf.toString("base64url");
 }
 
-export function signSessionJwt(userId: string, secret: Buffer): string {
+export function signSessionJwt(
+  userId: string,
+  secret: Buffer,
+  tenantId?: string,
+): string {
   const header = base64url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
   const now = Math.floor(Date.now() / 1000);
-  const payload = base64url(
-    JSON.stringify({
-      sub: userId,
-      exp: now + SESSION_TTL_SECONDS,
-      iat: now,
-    }),
-  );
+  const claims: Record<string, string | number> = {
+    sub: userId,
+    exp: now + SESSION_TTL_SECONDS,
+    iat: now,
+  };
+  if (tenantId) {
+    claims.tid = tenantId;
+  }
+  const payload = base64url(JSON.stringify(claims));
   const sig = createHmac("sha256", secret)
     .update(`${header}.${payload}`)
     .digest("base64url");
@@ -26,7 +32,7 @@ export function signSessionJwt(userId: string, secret: Buffer): string {
 export function verifySessionJwt(
   token: string,
   secret: Buffer,
-): { userId: string } | null {
+): { userId: string; tenantId?: string } | null {
   const parts = token.split(".");
   if (parts.length !== 3) {
     return null;
@@ -43,14 +49,17 @@ export function verifySessionJwt(
   try {
     const body = JSON.parse(
       Buffer.from(payload, "base64url").toString("utf8"),
-    ) as { sub?: string; exp?: number };
+    ) as { sub?: string; exp?: number; tid?: string };
     if (!body.sub || typeof body.exp !== "number") {
       return null;
     }
     if (body.exp < Math.floor(Date.now() / 1000)) {
       return null;
     }
-    return { userId: body.sub };
+    return {
+      userId: body.sub,
+      tenantId: typeof body.tid === "string" ? body.tid : undefined,
+    };
   } catch {
     return null;
   }
