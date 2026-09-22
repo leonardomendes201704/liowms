@@ -1,0 +1,295 @@
+.navRoot {
+  position: relative;
+  z-index: 30;
+  isolation: isolate;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  background: var(--lio-color-primary, #1e2a3a);
+  border-right: 1px solid color-mix(in srgb, var(--lio-color-primary) 80%, #000);
+  transition: width 0.18s ease;
+}
+
+.navRoot[data-flyout-open="false"] {
+  width: 56px;
+}
+
+.navRoot[data-flyout-open="true"] {
+  width: min(296px, 42vw);
+  box-shadow: var(--lio-shadow-card);
+}
+
+.navRoot[data-rail-expanded="true"][data-flyout-open="false"] {
+  width: 88px;
+}
+
+.railColumn {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  width: 56px;
+  height: 100%;
+  min-height: 0;
+  padding: var(--lio-space-sm) 0 0;
+  border-right: 1px solid color-mix(in srgb, #fff 12%, transparent);
+}
+
+.navRoot[data-rail-expanded="true"] .railColumn {
+  width: 88px;
+}
+
+.brandRail {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 var(--lio-space-xs) var(--lio-space-sm);
+  margin-bottom: var(--lio-space-xs);
+  border-bottom: 1px solid color-mix(in srgb, #fff 12%, transparent);
+}
+
+.brandLogoSmall,
+.brandLogoLarge {
+  display: block;
+  object-fit: contain;
+  border-radius: var(--lio-radius-md);
+}
+
+.brandLogoLarge {
+  display: none;
+  width: 72px;
+  max-width: 100%;
+  height: auto;
+}
+
+.navRoot[data-rail-expanded="true"] .brandLogoSmall,
+.navRoot[data-flyout-open="true"] .brandLogoSmall {
+  display: none;
+}
+
+.navRoot[data-rail-expanded="true"] .brandLogoLarge,
+.navRoot[data-flyout-open="true"] .brandLogoLarge {
+  display: block;
+}
+
+.railScroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, #fff 25%, transparent) transparent;
+}
+
+.railFooter {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--lio-space-xs) 0 var(--lio-space-sm);
+  margin-top: auto;
+  border-top: 1px solid color-mix(in srgb, #fff 12%, transparent);
+  background: var(--lio-color-primary, #1e2a3a);
+}
+
+.favorites {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lio-space-xs);
+  padding-bottom: var(--lio-space-sm);
+  margin-bottom: var(--lio-space-xs);
+  border-bottom: 1px solid color-mix(in srgb, #fff 12%, transparent);
+}
+
+.favoritesLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 24px;
+  color: color-mix(in srgb, #fff 55%, transparent);
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lio-space-xs);
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  padding-bottom: var(--lio-space-xs);
+}
+
+.railIcon {
+  display: block;
+  flex-shrink: 0;
+  font-size: 18px;
+  width: 1.25em;
+}
+
+.railButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 44px;
+  min-height: 44px;
+  padding: 4px 0;
+  border: 1px solid transparent;
+  border-radius: var(--lio-radius-md);
+  background: transparent;
+  color: color-mix(in srgb, #fff 88%, transparent);
+  font-size: 9px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  line-height: 1.1;
+}
+
+.navRoot[data-rail-expanded="true"] .railButton {
+  width: 72px;
+}
+
+.railButton:hover {
+  background: color-mix(in srgb, #fff 10%, transparent);
+}
+
+.railButton[data-active="true"],
+.railButton[aria-expanded="true"] {
+  border-color: var(--lio-color-accent);
+  background: color-mix(in srgb, var(--lio-color-accent) 22%, transparent);
+  color: #fff;
+}
+
+.railButtonHint {
+  display: none;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 9px;
+  opacity: 0.9;
+}
+
+.navRoot[data-rail-expanded="true"] .railButtonHint {
+  display: block;
+  max-width: 72px;
+  text-align: center;
+}
+
+.railButtonFavorite {
+  min-height: 40px;
+}
+
+.railToggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 44px;
+  min-height: 44px;
+  margin-bottom: var(--lio-space-xs);
+  padding: 4px 0;
+  border: 1px solid color-mix(in srgb, #fff 18%, transparent);
+  border-radius: var(--lio-radius-md);
+  background: color-mix(in srgb, #fff 6%, transparent);
+  color: color-mix(in srgb, #fff 92%, transparent);
+  cursor: pointer;
+}
+
+.navRoot[data-rail-expanded="true"] .railToggle {
+  width: 72px;
+}
+
+.railToggle:hover {
+  background: color-mix(in srgb, #fff 14%, transparent);
+}
+
+.flyout {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: var(--lio-space-md);
+  background: var(--lio-color-surface, #fff);
+}
+
+.flyoutTitle {
+  margin: 0 0 var(--lio-space-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lio-color-primary);
+}
+
+.flyoutList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.flyoutLink {
+  display: block;
+  padding: var(--lio-space-xs) var(--lio-space-sm);
+  border-radius: var(--lio-radius-sm);
+  font-size: 13px;
+  color: var(--lio-color-text, #1a1a1a);
+  text-decoration: none;
+}
+
+.flyoutLink:hover {
+  background: var(--lio-color-border);
+}
+
+.flyoutLink[data-active="true"] {
+  font-weight: 600;
+  color: var(--lio-color-accent);
+  background: color-mix(in srgb, var(--lio-color-accent) 10%, transparent);
+}
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: color-mix(in srgb, var(--lio-color-primary) 25%, transparent);
+  border: none;
+  padding: 0;
+  cursor: default;
+}
+
+@media (min-width: 1280px) {
+  .navRoot[data-flyout-open="true"] {
+    width: 280px;
+  }
+
+  .navRoot[data-flyout-open="true"] .railColumn {
+    width: 72px;
+  }
+
+  .navRoot[data-flyout-open="true"] .railButton {
+    width: 56px;
+  }
+
+  .navRoot[data-flyout-open="true"] .railButtonHint {
+    max-width: 64px;
+  }
+}

@@ -10,6 +10,36 @@
   padding: var(--lio-space-xl) var(--lio-space-md) var(--lio-space-xl);
 }
 
+/** Concept C — rail + flyout shell (PAP-262); ~1280px desktop reference */
+.appShellFrame {
+  display: flex;
+  align-items: stretch;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  width: 100%;
+  margin: 0;
+  max-width: none;
+  background: var(--lio-color-bg, #f6f7f9);
+}
+
+.appShellMain {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: var(--lio-space-lg) var(--lio-space-md) var(--lio-space-xl);
+}
+
+.appShellMain .header {
+  margin-bottom: var(--lio-space-md);
+}
+
+.appShellMain .headerActions {
+  flex-wrap: nowrap;
+}
+
 .headerActions {
   display: flex;
   flex-wrap: wrap;
